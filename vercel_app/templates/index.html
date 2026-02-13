@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mashup Studio</title>
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* ---------------- GLOBAL ---------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    height: 100vh;
+    background: #0f0f0f;
+    overflow: hidden;
+    color: white;
+}
+
+/* ---------------- PARTICLE BACKGROUND ---------------- */
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+}
+
+/* ---------------- MAIN CONTAINER ---------------- */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* ---------------- SIDEBAR ---------------- */
+.sidebar {
+    width: 220px;
+    background: #000;
+    padding: 20px;
+    border-right: 1px solid #111;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1db954;
+    margin-bottom: 30px;
+}
+
+.menu a {
+    display: block;
+    color: #bbb;
+    text-decoration: none;
+    margin: 15px 0;
+    transition: 0.3s;
+}
+
+.menu a:hover {
+    color: #1db954;
+}
+
+/* ---------------- MAIN CONTENT ---------------- */
+.main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ---------------- CARD ---------------- */
+.card {
+    width: 400px;
+    padding: 30px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+/* ---------------- TITLE ---------------- */
+h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+p {
+    color: #aaa;
+    margin-bottom: 20px;
+}
+
+/* ---------------- INPUT ---------------- */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 12px;
+    border: none;
+    background: rgba(255,255,255,0.08);
+    color: white;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus {
+    box-shadow: 0 0 10px #1db954;
+}
+
+/* ---------------- BUTTON ---------------- */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    border-radius: 12px;
+    border: none;
+    background: #1db954;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 10px #1db954;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px #1db954;
+}
+
+/* ---------------- MUSIC VISUALIZER ---------------- */
+.visualizer {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.bar {
+    width: 5px;
+    height: 15px;
+    margin: 3px;
+    background: #1db954;
+    animation: wave 1s infinite ease-in-out;
+}
+
+.bar:nth-child(2) { animation-delay: 0.1s; }
+.bar:nth-child(3) { animation-delay: 0.2s; }
+.bar:nth-child(4) { animation-delay: 0.3s; }
+.bar:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave {
+    0%,100% { height: 10px; }
+    50% { height: 30px; }
+}
+
+/* ---------------- NEON TEXT ---------------- */
+.neon {
+    color: #1db954;
+    text-shadow: 0 0 10px #1db954, 0 0 20px #1db954;
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="container">
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">🎧 Mashup</div>
+
+        <div class="menu">
+            <a href="#">Home</a>
+            <a href="#">Create</a>
+            <a href="#">Library</a>
+        </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main">
+        <div class="card">
+
+            <h1 class="neon">Mashup Studio</h1>
+            <p>Create AI-powered music mashups</p>
+
+            <!-- Visualizer -->
+            <div class="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+
+            <!-- FORM -->
+            <form action="/process" method="POST">
+                <input type="text" name="singer" placeholder="🎤 Singer Name" required>
+                <input type="number" name="num" placeholder="🎬 Videos (>10)" required>
+                <input type="number" name="duration" placeholder="⏱ Duration (>20s)" required>
+                <input type="email" name="email" placeholder="📧 Email" required>
+
+                <button type="submit">Generate Mashup 🎶</button>
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+<!-- PARTICLE SCRIPT -->
+<script>
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for (let i = 0; i < 80; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2,
+        d: Math.random() * 1
+    });
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#1db954";
+
+    for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    update();
+}
+
+function update() {
+    for (let i = 0; i < particles.length; i++) {
+        let p = particles[i];
+        p.y += p.d;
+
+        if (p.y > canvas.height) {
+            p.y = 0;
+            p.x = Math.random() * canvas.width;
+        }
+    }
+}
+
+setInterval(draw, 30);
+</script>
+
+</body>
+</html>

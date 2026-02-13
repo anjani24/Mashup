@@ -1,0 +1,6 @@
+flask
+yt-dlp
+moviepy
+imageio-ffmpeg
+yagmail
+python-dotenv
